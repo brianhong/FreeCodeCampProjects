@@ -1,0 +1,16 @@
+.wi{
+    font-size: 4em;
+}
+
+body{
+    font-size: 2em;
+    text-align: center;
+    color: white;
+    background: url("http://core0.staticworld.net/images/article/2014/05/stormy-weather-concept-with-retro-stained-paper-background-toned-fx-122586382-100265662-orig.jpg");
+}
+
+button{
+    font-size: 1em;
+    color: white;
+    cursor: pointer;
+}

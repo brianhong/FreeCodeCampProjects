@@ -1,0 +1,26 @@
+body{
+  background-color: white;
+  text-align: center;
+  font-family: 'Open Sans', sans-serif;
+}
+
+h1{
+  font-size: 4em;
+}
+
+#random-quote-button{
+  margin-bottom: 50px;
+}
+
+#quote-button{
+  background-color: green;
+  font-size: 2em;
+  border: none;
+  color: white;
+  display: inline-block;
+  padding: 15px;
+}
+
+#quote-button:active{
+  transform: translateY(4px);
+}
