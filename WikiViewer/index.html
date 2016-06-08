@@ -2,12 +2,24 @@
 
 <head>
     <title>Wikipedia Viewer</title>
+    <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 </head>
 
 <body>
     <h1>Wiki Viewer</h1>
-    <div>
-        <p id="testing"></p>
+    <div id='search-div'>
+        <div id='input-div'>
+            <form id='input-form' onsubmit='myfunction()'>
+                <input type='text' id='user-input' placeholder='Enter text here'>
+                <button id='input-button' type='submit' onclick='myfunction()'><i class='fa fa-wikipedia-w' aria-hidden='true'></i></button>
+            </form>
+        </div>
+        <div id='random-div'>
+            <form><button formaction='https://en.wikipedia.org/wiki/Special:Random'>Random Article</button></form>
+        </div>
+        <div id='search-results'>
+        </div>
     </div>
     
     <!-- SCRIPTS -->
