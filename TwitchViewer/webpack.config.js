@@ -1,11 +1,12 @@
-var webpack = require('webpack')
-var path = require('path')
+const webpack = require('webpack');
+const path = require('path');
+const validate = require('webpack-validator');
 
 /* Directory path for bundle file output */
-var BUILD_DIR = path.resolve(__dirname, 'src/client/public');
+const BUILD_DIR = path.resolve(__dirname, 'src/client/public');
 
 /* Directory path for application's codebase */
-var APP_DIR = path.resolve(__dirname, 'src/client/app');
+const APP_DIR = path.resolve(__dirname, 'src/client/app');
 
 var config = {
  entry: APP_DIR + '/index.jsx',
@@ -24,4 +25,4 @@ var config = {
  }
 };
 
-module.exports = config;
+module.exports = validate(config);

@@ -1,0 +1,12 @@
+$font-stack: Helvetica, sans-serif;
+$primary-color: #333;
+$secondary-color: #246;
+
+body{
+ font: 100% $font-stack;
+ color: $primary-color;
+}
+
+.searchDiv{
+    color: $secondary-color;
+}

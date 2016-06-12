@@ -47,7 +47,7 @@
   \**********************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
@@ -65,201 +65,167 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var Greeting = function (_React$Component) {
-	  _inherits(Greeting, _React$Component);
+	var DEFAULT_STREAMERS = ['ESL_SC2', 'OgamingSC2', 'cretetion', 'freecodecamp', 'storbeck', 'habathcx', 'RobotCaleb', 'noobs2ninjas', 'brunofin'];
 	
-	  function Greeting() {
-	    _classCallCheck(this, Greeting);
+	var SearchBar = _react2.default.createClass({
+	  displayName: 'SearchBar',
 	
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Greeting).apply(this, arguments));
-	  }
-	
-	  _createClass(Greeting, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'h1',
-	        null,
-	        'Hello'
-	      );
-	    }
-	  }]);
-	
-	  return Greeting;
-	}(_react2.default.Component);
-	
-	var ListBox = _react2.default.createClass({
-	  displayName: 'ListBox',
-	
-	  getInitialState: function getInitialState() {
-	    /* Set up initial state of component */
-	    return { data: [] };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    $.getJSON(this.props.url, {
-	      limit: 3
-	    }).done(function (data) {
-	      this.setState({ data: data.top });
-	    }.bind(this)).fail(function () {
-	      console.log('ERROR');
-	    }.bind(this));
+	  handleSearch: function handleSearch() {
+	    this.props.onUserInput(this.refs.filterInput.value);
 	  },
 	  render: function render() {
 	    return _react2.default.createElement(
-	      'div',
-	      { className: 'listBox' },
-	      _react2.default.createElement(
-	        'h1',
-	        null,
-	        'Box'
-	      ),
-	      _react2.default.createElement(BroadcasterDiv, { data: this.state.data })
+	      'form',
+	      { className: 'searchForm' },
+	      _react2.default.createElement('input', {
+	        type: 'text',
+	        placeholder: 'Search...',
+	        value: this.props.filter,
+	        ref: 'filterInput',
+	        onChange: this.handleSearch
+	      })
 	    );
 	  }
 	});
 	
-	var BroadcasterDiv = function (_React$Component2) {
-	  _inherits(BroadcasterDiv, _React$Component2);
+	var StreamList = function (_React$Component) {
+	  _inherits(StreamList, _React$Component);
 	
-	  function BroadcasterDiv() {
-	    _classCallCheck(this, BroadcasterDiv);
+	  function StreamList() {
+	    _classCallCheck(this, StreamList);
 	
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(BroadcasterDiv).apply(this, arguments));
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(StreamList).apply(this, arguments));
 	  }
 	
-	  _createClass(BroadcasterDiv, [{
+	  _createClass(StreamList, [{
 	    key: 'render',
 	    value: function render() {
-	      var broadcasterNodes = this.props.data.map(function (broadcaster) {
-	        return _react2.default.createElement(
-	          PictureDiv,
-	          { image: broadcaster.game.logo.large, broadcaster: broadcaster.game.name, key: broadcaster.game._id },
-	          broadcaster.viewers
-	        );
+	      var _this2 = this;
+	
+	      console.log(this.props.streams);
+	      var broadcasterNodes = this.props.streams.map(function (streamer) {
+	        if (typeof streamer === 'undefined') {
+	          return 10;
+	        }
+	        if (_this2.props.filter.length == 0) {
+	          return _react2.default.createElement(
+	            StreamDiv,
+	            { broadcaster: streamer.stream.channel.display_name, key: streamer.stream._id },
+	            streamer.stream.channel.url
+	          );
+	        } else {
+	          return _react2.default.createElement(
+	            StreamDiv,
+	            { broadcaster: streamer.display_name, key: streamer._id },
+	            streamer.url
+	          );
+	        }
 	      });
 	      return _react2.default.createElement(
 	        'div',
-	        { className: 'broadcasterDiv' },
+	        { className: 'streamList' },
 	        broadcasterNodes
 	      );
 	    }
 	  }]);
 	
-	  return BroadcasterDiv;
+	  return StreamList;
 	}(_react2.default.Component);
 	
-	var PictureDiv = _react2.default.createClass({
-	  displayName: 'PictureDiv',
+	var StreamDiv = function (_React$Component2) {
+	  _inherits(StreamDiv, _React$Component2);
 	
-	  render: function render() {
-	    return _react2.default.createElement(
-	      'div',
-	      { className: 'pictureDiv' },
-	      _react2.default.createElement('img', { src: this.props.image }),
-	      _react2.default.createElement(
-	        'h2',
-	        { className: 'picOwner' },
-	        this.props.broadcaster
-	      ),
-	      this.props.children
-	    );
-	  }
-	});
+	  function StreamDiv() {
+	    _classCallCheck(this, StreamDiv);
 	
-	var SearchForm = _react2.default.createClass({
-	  displayName: 'SearchForm',
-	
-	  getInitialState: function getInitialState() {
-	    return { data: [] };
-	    //return {qs: '', data: []};
-	  },
-	  handleTextChange: function handleTextChange(e) {
-	    //this.setState({qs: e.target.value});
-	    //var search_query = this.state.qs.trim();
-	    var search_query = e.target.value.trim();
-	    /*
-	    if(!qs){
-	      return;
-	    }
-	    */
-	    $.getJSON(this.props.url, {
-	      query: search_query,
-	      limit: 1
-	    }).done(function (data) {
-	      this.setState({ data: data.channels });
-	    }.bind(this)).fail(function () {
-	      console.log('ERROR');
-	    }.bind(this));
-	  },
-	  render: function render() {
-	    var broadcasterNodes = this.props.data.map(function (broadcaster) {
-	      return _react2.default.createElement(
-	        SearchDiv,
-	        { gameName: broadcaster.game },
-	        broadcaster.url
-	      );
-	    });
-	
-	    return _react2.default.createElement(
-	      'div',
-	      { className: 'searchForm' },
-	      _react2.default.createElement(
-	        'form',
-	        { className: 'searchForm' },
-	        _react2.default.createElement('input', {
-	          type: 'text',
-	          placeholder: 'Search...'
-	          //value={this.state.qs}
-	          , onChange: this.handleTextChange
-	        }),
-	        _react2.default.createElement('input', { type: 'submit', value: 'Search' })
-	      ),
-	      '/*',
-	      _react2.default.createElement(SearchDiv, { data: this.state.data }),
-	      '*/',
-	      _react2.default.createElement(
-	        'div',
-	        { className: 'channelNodes' },
-	        broadcasterNodes
-	      )
-	    );
-	  }
-	});
-	
-	var SearchDiv = function (_React$Component3) {
-	  _inherits(SearchDiv, _React$Component3);
-	
-	  function SearchDiv() {
-	    _classCallCheck(this, SearchDiv);
-	
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(SearchDiv).apply(this, arguments));
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(StreamDiv).apply(this, arguments));
 	  }
 	
-	  _createClass(SearchDiv, [{
+	  _createClass(StreamDiv, [{
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
 	        'div',
-	        { className: 'searchDiv' },
+	        { className: 'streamRow' },
 	        _react2.default.createElement(
 	          'h4',
 	          null,
-	          'Search Div'
+	          this.props.broadcaster
 	        ),
-	        _react2.default.createElement(
-	          'h5',
-	          { className: 'gameName' },
-	          this.props.gameName
-	        )
+	        this.props.children
 	      );
 	    }
 	  }]);
 	
-	  return SearchDiv;
+	  return StreamDiv;
 	}(_react2.default.Component);
 	
-	(0, _reactDom.render)(_react2.default.createElement(SearchForm, { url: 'https://api.twitch.tv/kraken/search/channels?callback=?' }), document.getElementById('searchDiv'));
-	(0, _reactDom.render)(_react2.default.createElement(ListBox, { url: 'https://api.twitch.tv/kraken/games/top?callback=?' }), document.getElementById('content'));
+	function getStreamObj(streamer) {
+	  $.getJSON("https://api.twitch.tv/kraken/streams/" + streamer + '?callback=?').done(function (data) {
+	    console.log(data);
+	    return data;
+	  }.bind(this)).fail(function () {
+	    console.log('getStreamObj ERROR');
+	  }.bind(this));
+	}
+	
+	var FilterableStreamList = _react2.default.createClass({
+	  displayName: 'FilterableStreamList',
+	
+	  handleUserInput: function handleUserInput(new_filter) {
+	    /* setState() creates pending transition, can potentially return existing value here */
+	    this.setState({
+	      filter: new_filter
+	    });
+	    if (new_filter === '') {
+	      this.setState({
+	        rendered_streams: this.props.streams.map(getStreamObj)
+	      });
+	    } else {
+	      var search_query = new_filter.trim();
+	      $.getJSON(this.props.url, {
+	        query: search_query,
+	        limit: 1
+	      }).done(function (data) {
+	        this.setState({
+	          rendered_streams: data.channels
+	        });
+	      }.bind(this)).fail(function () {
+	        console.log('SearchBar ERROR');
+	      }.bind(this));
+	    }
+	  },
+	  getInitialState: function getInitialState() {
+	    return {
+	      filter: '',
+	      rendered_streams: []
+	    };
+	  },
+	  /* Called immediately after initial render.
+	     componentDidMount() generally used for side-effects (e.g., AJAX to initialize state data) */
+	  componentDidMount: function componentDidMount() {
+	    this.setState({
+	      rendered_streams: this.props.streams.map(getStreamObj)
+	    });
+	  },
+	  shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
+	    return true;
+	  },
+	
+	  render: function render() {
+	    return _react2.default.createElement(
+	      'div',
+	      null,
+	      _react2.default.createElement(SearchBar, {
+	        filter: this.state.filter,
+	        onUserInput: this.handleUserInput
+	      }),
+	      _react2.default.createElement(StreamList, { filter: this.state.filter, streams: this.state.rendered_streams })
+	    );
+	  }
+	});
+	
+	(0, _reactDom.render)(_react2.default.createElement(FilterableStreamList, { streams: DEFAULT_STREAMERS, url: 'https://api.twitch.tv/kraken/search/channels/?callback=?' }), document.getElementById('content'));
 
 /***/ },
 /* 1 */

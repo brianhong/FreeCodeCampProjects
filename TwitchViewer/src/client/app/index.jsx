@@ -1,140 +1,149 @@
+"use strict"
 import React from 'react';
 import {render} from 'react-dom';
 
-class Greeting extends React.Component{
-  render(){
-    return <h1>Hello</h1>;
-  }
-}
+var DEFAULT_STREAMERS = [
+  'ESL_SC2',
+  'OgamingSC2',
+  'cretetion',
+  'freecodecamp',
+  'storbeck',
+  'habathcx',
+  'RobotCaleb',
+  'noobs2ninjas',
+  'brunofin'
+];
 
-var ListBox = React.createClass({
-  getInitialState: function(){
-    /* Set up initial state of component */
-    return {data: []};
-  },
-  componentDidMount: function(){
-    $.getJSON(this.props.url,
-        {
-          limit: 3
-        })
-     .done(function(data){
-       this.setState({data: data.top});
-     }.bind(this))
-     .fail(function(){
-       console.log('ERROR');
-     }.bind(this))
+var SearchBar = React.createClass({
+  handleSearch: function(){
+      this.props.onUserInput(
+        this.refs.filterInput.value
+      );
   },
   render: function(){
     return(
-      <div className='listBox'>
-        <h1>Box</h1>
-        <BroadcasterDiv data={this.state.data} />
-      </div>
-    ); 
+        <form className='searchForm'>
+          <input 
+            type="text" 
+            placeholder="Search..."
+            value={this.props.filter}
+            ref='filterInput'
+            onChange={this.handleSearch}
+          />
+        </form>
+    );
   }
 });
 
-class BroadcasterDiv extends React.Component{
+class StreamList extends React.Component{
   render(){
-    var broadcasterNodes = this.props.data.map(function(broadcaster){
-      return(
-        <PictureDiv image={broadcaster.game.logo.large} broadcaster={broadcaster.game.name} key={broadcaster.game._id}>
-          {broadcaster.viewers}
-        </PictureDiv>
-      );
+    console.log(this.props.streams);
+    var broadcasterNodes = this.props.streams.map((streamer) => {
+      if(typeof streamer === 'undefined'){
+        return 10;
+      }
+      if(this.props.filter.length == 0){
+        return(
+          <StreamDiv broadcaster={streamer.stream.channel.display_name} key={streamer.stream._id}>
+            {streamer.stream.channel.url}
+          </StreamDiv>
+        );
+      }
+      else{
+        return(
+          <StreamDiv broadcaster={streamer.display_name} key={streamer._id}>
+            {streamer.url}
+          </StreamDiv>
+        );
+      }
     });
     return(
-      <div className='broadcasterDiv'>
+      <div className='streamList'>
         {broadcasterNodes}
       </div>
     );
   }
 }
 
-var PictureDiv = React.createClass({
-  render: function(){
-    return(
-      <div className='pictureDiv'>
-        <img src={this.props.image}></img>
-        <h2 className='picOwner'>
-          {this.props.broadcaster}
-        </h2>
-        {this.props.children}
-      </div>
-    );
-  }
-});
-
-var SearchForm = React.createClass({
-  getInitialState: function(){
-    return {data: []};
-    //return {qs: '', data: []};
-  },
-  handleTextChange: function(e){
-    //this.setState({qs: e.target.value});
-    //var search_query = this.state.qs.trim();
-    var search_query = e.target.value.trim();
-    /*
-    if(!qs){
-      return;
-    }
-    */
-    $.getJSON(this.props.url,
-        {
-          query: search_query,
-          limit: 1
-        })
-      .done(function(data){
-        this.setState({data: data.channels});
-      }.bind(this))
-      .fail(function(){
-        console.log('ERROR');
-      }.bind(this))
-  },
-  render: function(){
-    var broadcasterNodes = this.props.data.map(function(broadcaster){
-      return(
-        <SearchDiv gameName={broadcaster.game}>
-          {broadcaster.url}
-        </SearchDiv>
-      );
-    });
-    
-    return(
-      <div className='searchForm'>
-        <form className='searchForm'>
-          <input 
-            type="text" 
-            placeholder="Search..."
-            //value={this.state.qs}
-            onChange={this.handleTextChange}
-          />
-          <input type='submit' value='Search' />
-        </form>
-        /*
-        <SearchDiv data={this.state.data} />
-        */
-        <div className='channelNodes'>
-          {broadcasterNodes}
-        </div>
-      </div>
-    );
-  }
-});
-
-class SearchDiv extends React.Component{
+class StreamDiv extends React.Component{
   render(){
     return(
-      <div className='searchDiv'>
-        <h4>Search Div</h4>
-        <h5 className='gameName'>
-          {this.props.gameName}
-        </h5>
+      <div className='streamRow'>
+        <h4>
+          {this.props.broadcaster}
+        </h4>
+        {this.props.children}
       </div>
     );
   }
 }
 
-render(<SearchForm url="https://api.twitch.tv/kraken/search/channels?callback=?"/>, document.getElementById('searchDiv'));
-render(<ListBox url="https://api.twitch.tv/kraken/games/top?callback=?" />, document.getElementById('content'));
+function getStreamObj(streamer){
+      $.getJSON("https://api.twitch.tv/kraken/streams/" + streamer + '?callback=?')
+        .done(function(data){
+          console.log(data);
+          return data;
+        }.bind(this))
+        .fail(function(){
+          console.log('getStreamObj ERROR');
+        }.bind(this))
+}
+
+var FilterableStreamList = React.createClass({
+  handleUserInput: function(new_filter){
+    /* setState() creates pending transition, can potentially return existing value here */
+    this.setState({
+      filter: new_filter
+    });
+    if(new_filter === ''){
+      this.setState({
+        rendered_streams: this.props.streams.map(getStreamObj)
+      });
+    }
+    else{
+      var search_query = new_filter.trim();
+      $.getJSON(this.props.url,{
+        query: search_query,
+        limit: 1
+      })
+      .done(function(data){
+        this.setState({
+          rendered_streams: data.channels
+        });
+      }.bind(this))
+      .fail(function(){
+        console.log('SearchBar ERROR');
+      }.bind(this))
+    }
+  },
+  getInitialState: function(){
+    return{
+      filter: '',
+      rendered_streams: []
+    };
+  },
+  /* Called immediately after initial render.
+     componentDidMount() generally used for side-effects (e.g., AJAX to initialize state data) */
+  componentDidMount: function(){ 
+    this.setState({
+      rendered_streams: this.props.streams.map(getStreamObj)
+    });
+  },
+  shouldComponentUpdate(nextProps, nextState){
+    return true;
+  },
+  render: function(){
+    return(
+      <div>
+        <SearchBar 
+          filter={this.state.filter} 
+          onUserInput={this.handleUserInput}
+        />
+        <StreamList filter={this.state.filter} streams={this.state.rendered_streams} />
+      </div>
+    );
+  }
+});
+
+render(<FilterableStreamList streams={DEFAULT_STREAMERS} url="https://api.twitch.tv/kraken/search/channels/?callback=?" />, document.getElementById('content'));
 
